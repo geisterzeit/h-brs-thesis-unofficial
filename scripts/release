@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+# Opens (or updates) the pull request to typst/packages for the version in typst.toml.
+# Usage: scripts/release "<what changed in this version>"
+#
+# `utpm prj link` selects the package files, honoring .typstignore and .gitignore.
+# TYPST_PACKAGES_DIR points to a clone of your typst/packages fork. If it does not exist,
+# a lightweight sparse clone is created there.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+description="${1:?usage: scripts/release \"<what changed in this version>\"}"
+name=$(utpm prj metadata -f name)
+version=$(utpm prj metadata -f version)
+branch="$name-$version"
+github_user=$(gh api user --jq .login)
+fork="$github_user/packages"
+packages_dir="${TYPST_PACKAGES_DIR:-${XDG_CACHE_HOME:-$HOME/.cache}/typst-packages}"
+
+fail() { echo "error: $*" >&2; exit 1; }
+
+ensure_releasable() {
+  [[ -z "$(git status --porcelain)" ]] || fail "commit your changes first"
+  if gh api "repos/typst/packages/contents/packages/preview/$name/$version" --silent 2>/dev/null; then
+    fail "$name:$version is already published, bump it with: make bump VERSION=<new-version>"
+  fi
+}
+
+sync_fork_with_upstream() {
+  local ahead
+  ahead=$(gh api "repos/typst/packages/compare/main...$github_user:packages:main" --jq .ahead_by)
+  [[ "$ahead" == 0 ]] \
+    || fail "the main branch of $fork has commits that typst/packages does not have, reset it to typst/packages first"
+  gh repo sync "$fork" --source typst/packages --branch main >/dev/null
+}
+
+prepare_packages_clone() {
+  if [[ ! -d "$packages_dir/.git" ]]; then
+    git clone --filter=blob:none --sparse --depth=1 "https://github.com/$fork.git" "$packages_dir"
+    git -C "$packages_dir" sparse-checkout set "packages/preview/$name"
+  fi
+  git -C "$packages_dir" fetch --depth=1 origin main
+  git -C "$packages_dir" checkout --quiet --force -B "$branch" FETCH_HEAD
+}
+
+copy_package_into_clone() {
+  local staging target="$packages_dir/packages/preview/$name/$version"
+  staging=$(mktemp -d)
+  TYPST_PACKAGE_PATH="$staging" utpm prj link >/dev/null 2>&1
+  rm -rf "$target"
+  mkdir -p "$(dirname "$target")"
+  mv "$staging/local/$name/$version" "$target"
+  rm -rf "$staging"
+  git -C "$packages_dir" add "packages/preview/$name/$version"
+  git -C "$packages_dir" commit --quiet -m "$name:$version"
+  git -C "$packages_dir" push --quiet --force origin "$branch"
+}
+
+open_pull_request() {
+  local existing
+  existing=$(gh pr list -R typst/packages --author "$github_user" --head "$branch" --state open --json url --jq '.[0].url')
+  if [[ -n "$existing" ]]; then
+    echo "Updated existing pull request: $existing"
+    return
+  fi
+
+  gh pr create -R typst/packages --base main --head "$github_user:$branch" \
+    --title "$name:$version" \
+    --body "$(printf 'I am submitting\n- [ ] a new package\n- [x] an update for a package\n\nDescription: %s\n' "$description")"
+}
+
+ensure_releasable
+sync_fork_with_upstream
+prepare_packages_clone
+copy_package_into_clone
+open_pull_request
