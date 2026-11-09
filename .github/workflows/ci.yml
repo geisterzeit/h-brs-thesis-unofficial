@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  compile-template:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: typst-community/setup-typst@v4
+      - name: Compile the template against this checkout
+        run: |
+          name=$(sed -n 's/^name *= *"\(.*\)"/\1/p' typst.toml)
+          version=$(sed -n 's/^version *= *"\(.*\)"/\1/p' typst.toml)
+          mkdir -p "$RUNNER_TEMP/packages/preview/$name"
+          ln -s "$PWD" "$RUNNER_TEMP/packages/preview/$name/$version"
+          typst compile --package-path "$RUNNER_TEMP/packages" template/main.typ
+      - uses: actions/upload-artifact@v4
+        with:
+          name: template
+          path: template/main.pdf

@@ -1,0 +1,15 @@
+name: Feature request
+description: Suggest an option or a change, for example to follow the H-BRS guidelines more closely.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: What would you like?
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Why?
+      description: For example the section of the "Regeln für wissenschaftliche Arbeiten" or your department's requirements.
