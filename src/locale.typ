@@ -7,6 +7,7 @@
   abbreviations_title: "List of Abbreviations",
   bibliography_title: "References",
   author_preposition: "by",
+  submission_date_label: "Submitted on",
 )} else {(
   declaration_title: "Eidesstattliche Erklärung",
   declaration_text: "Ich versichere an Eides statt, die von mir vorgelegte Arbeit selbstständig verfasst zu haben. Alle Stellen, die wörtlich oder sinngemäß aus veröffentlichten oder nicht veröffentlichten Arbeiten anderer entnommen sind, habe ich als entnommen kenntlich gemacht. Sämtliche Quellen und Hilfsmittel, die ich für die Arbeit benutzt habe, sind angegeben. Die Arbeit hat mit gleichem Inhalt bzw. in wesentlichen Teilen noch keiner anderen Prüfungsbehörde vorgelegen.",
@@ -16,4 +17,5 @@
   abbreviations_title: "Abkürzungsverzeichnis",
   bibliography_title: "Literatur",
   author_preposition: "von",
+  submission_date_label: "Eingereicht am",
 )}

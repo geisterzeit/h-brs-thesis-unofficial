@@ -10,6 +10,7 @@
 
 #let template(
   title: "",
+  subtitle: "",
   authors: "",
   type-of-work: "",
   date: "",
@@ -35,9 +36,10 @@
   show: configure-document-styles.with(lang, strings.bibliography_title, font)
 
   // Title page
-  set page(numbering: none, header: none, footer: none)
-  print-title-page(title, type-of-work, author-list, info, department, department-en, strings)
-  pagebreak()
+  {
+    set page(numbering: none, header: none, footer: none, margin: (x: 3cm))
+    print-title-page(title, subtitle, type-of-work, author-list, date, info, department, department-en, strings)
+  }
 
   set page(
     numbering: "i",

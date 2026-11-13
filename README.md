@@ -21,6 +21,19 @@ Text...
 ```
 
 
+## Subtitle
+
+`subtitle` is optional and is rendered below the title on the title page:
+
+```typst
+#show: template.with(
+  title: "Titel der Arbeit",
+  subtitle: "Untertitel der Arbeit",
+  // ...
+)
+```
+
+
 ## Authors
 
 A single author is passed as a string:
@@ -190,7 +203,7 @@ Derived from [HochschuleB-R-S.svg](https://de.wikipedia.org/wiki/Datei:Hochschul
 
 ### DIN 1505-2 Citation Style
 
-`din-1505-2.csl` is sourced from the [Zotero Style Repository](http://www.zotero.org/styles/din-1505-2).
+`din-1505-2.csl` is sourced from the [Zotero Style Repository](http://www.zotero.org/styles/din-1505-2). It has been modified to not print the year suffix twice in citations (e.g. `2020a; a`) when an author has several works in the same year.
 
 - **Author:** Sven Rothe (mmoole@googlemail.com)
 - **Contributor:** Julian Onions (julian.onions@gmail.com)

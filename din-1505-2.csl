@@ -289,7 +289,6 @@
             <text macro="cite-year"/>
             <text macro="locator"/>
           </group>
-          <text variable="year-suffix"/>
         </else>
       </choose>
     </layout>
