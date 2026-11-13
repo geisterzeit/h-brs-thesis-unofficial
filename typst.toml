@@ -1,6 +1,6 @@
 [package]
 name = "h-brs-thesis-unofficial"
-version = "0.1.2"
+version = "0.2.0"
 entrypoint = "lib.typ"
 authors = ["Julian Meser <@geisterzeit>"]
 license = "MIT"
