@@ -1,4 +1,4 @@
-#import "@preview/abbr:0.3.0"
+#import "@preview/abbr:0.3.1"
 #import "src/title-page.typ": print-title-page
 #import "src/headings.typ": configure-document-styles, apply-font
 #import "src/abbreviations.typ": load-abbreviations, print-abbreviations
